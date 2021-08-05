@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd">
+    <!-- 配置整合mybatis过程 -->
+    <!-- 1.配置数据库相关参数properties的属性：${url} -->
+        <context:property-placeholder location="classpath:jdbc.properties"/>
+    <!-- 2.数据库连接池 -->
+    <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+        <!-- hikariCP连接池的私有属性 -->
+        <property name="maximumPoolSize" value="30"/>
+        <property name="minimumIdle" value="10"/>
+        <!-- 关闭连接后不自动commit -->
+        <property name="autoCommit" value="false"/>
+        <!-- 获取连接超时时间 -->
+        <property name="connectionTimeout" value="10000"/>
+        <property name="maxLifetime" value="180000"/>
+        <property name="idleTimeout" value="18000"/>
+        <property name="driverClassName" value="${jdbc.driver}"/>
+        <property name="jdbcUrl" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+    </bean>
+
+    <!-- 3.配置mybatis的SqlSessionFactory对象 -->
+    <bean id="sqlSessionFactory" class="com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean">
+        <!-- 注入数据库连接池 -->
+        <property name="dataSource" ref="dataSource"/>
+        <property name="globalConfig" ref="globalConfig"/>
+        <property name="plugins">
+            <array>
+                <ref bean="mybatisPlusInterceptor"/>
+            </array>
+        </property>
+        <!-- 扫描entity包 使用别名 -->
+<!--        <property name="typeAliasesPackage" value="org.example.shoptemp.entity"/>-->
+        <property name="mapperLocations" value="classpath:mapper/*.xml"/>
+    </bean>
+
+    <bean id="mybatisPlusInterceptor" class="com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor">
+        <property name="interceptors">
+            <list>
+                <ref bean="paginationInnerInterceptor"/>
+            </list>
+        </property>
+    </bean>
+    <bean id="paginationInnerInterceptor"
+          class="com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor">
+        <constructor-arg name="dbType" value="MYSQL"/>
+    </bean>
+    <bean id="countSqlParser"
+          class="com.baomidou.mybatisplus.extension.plugins.pagination.optimize.JsqlParserCountOptimize">
+        <property name="optimizeJoin" value="true"/>
+    </bean>
+    <bean id="globalConfig" class="com.baomidou.mybatisplus.core.config.GlobalConfig">
+        <property name="dbConfig" ref="dbConfig"/>
+    </bean>
+
+    <bean id="dbConfig" class="com.baomidou.mybatisplus.core.config.GlobalConfig.DbConfig">
+        <property name="idType" value="AUTO"/>
+    </bean>
+
+    <!-- 4.配置扫描Dao接口包，动态实现Dao接口，注入到spring容器中 -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!-- 注入sqlSessionFactory -->
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+        <!-- 给出需要扫描Dao接口包 -->
+        <property name="basePackage" value="org.example.shoptemp.mapper"/>
+    </bean>
+</beans>
