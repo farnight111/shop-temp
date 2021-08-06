@@ -23,6 +23,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
                 .last("limit 1");
         return getOne(queryWrapper);
     }
+
 }
 
 

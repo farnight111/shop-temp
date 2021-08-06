@@ -4,10 +4,7 @@ import org.example.shoptemp.entity.Result;
 import org.example.shoptemp.entity.User;
 import org.example.shoptemp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -21,8 +18,13 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @PostMapping
-    public Result create(@RequestBody User user) {
+    /**
+     * 注册
+     * @param user
+     * @return
+     */
+    @PostMapping("/register")
+    public Result register(@RequestBody User user) {
         userService.save(user);
         return Result.success();
     }
@@ -36,5 +38,26 @@ public class UserController {
         } else {
             return Result.fail();
         }
+    }
+
+    /**
+     * 改密码
+     * @param oldPass
+     * @param newPass
+     * @param request
+     * @return
+     */
+    @PutMapping("/pass")
+    public Result changePass(String oldPass, String newPass, HttpServletRequest request) {
+        User user = (User) request.getSession().getAttribute("user");
+        if (user==null) {
+            return Result.fail("没登陆");
+        }
+        if (!user.getPass().equals(oldPass)) {
+            return Result.fail("旧密码错误");
+        }
+        user.setPass(newPass);
+        userService.updateById(user);
+        return Result.success();
     }
 }
