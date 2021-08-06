@@ -9,8 +9,9 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>war</packaging>
 
-    <name>shop-temp Maven Webapp</name>
+    <name>ssm模板</name>
     <url>http://www.example.com</url>
+    <description>ssm模板</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
