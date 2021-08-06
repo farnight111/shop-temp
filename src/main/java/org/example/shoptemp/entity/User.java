@@ -13,7 +13,7 @@ import lombok.Data;
  */
 @TableName(value ="user")
 @Data
-public class User implements Serializable {
+public class User implements Serializable, Cloneable {
     /**
      * 
      */
@@ -37,4 +37,14 @@ public class User implements Serializable {
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
+
+    @Override
+    public User clone() {
+        try {
+            User clone = (User) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
 }

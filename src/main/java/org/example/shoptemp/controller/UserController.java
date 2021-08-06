@@ -34,7 +34,9 @@ public class UserController {
         User user = userService.login(username, pass);
         if (user != null) {
             request.getSession().setAttribute("user", user);
-            return Result.success();
+            final User clone = user.clone();
+            clone.setPass(null);
+            return Result.success(clone);
         } else {
             return Result.fail();
         }
