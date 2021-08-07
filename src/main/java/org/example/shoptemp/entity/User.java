@@ -34,6 +34,10 @@ public class User implements Serializable, Cloneable {
      * 0买家 1卖家 2管理员
      */
     private Integer type;
+    /**
+     * 0未审核  1通过  2不通过
+     */
+    private Integer status;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
