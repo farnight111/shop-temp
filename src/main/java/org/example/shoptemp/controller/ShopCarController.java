@@ -26,8 +26,6 @@ public class ShopCarController {
     @Autowired
     private ShopCarService shopCarService;
     @Autowired
-    private GoodsService goodsService;
-    @Autowired
     private HttpServletRequest request;
 
     /**
