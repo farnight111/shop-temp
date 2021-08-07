@@ -5,15 +5,19 @@
 <mapper namespace="org.example.shoptemp.mapper.ShopCarMapper">
 
     <resultMap id="BaseResultMap" type="org.example.shoptemp.entity.ShopCar">
-            <id property="id" column="id" jdbcType="INTEGER"/>
-            <result property="buyerId" column="buyer_id" jdbcType="INTEGER"/>
-            <result property="goodsId" column="goods_id" jdbcType="INTEGER"/>
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="buyerId" column="buyer_id" jdbcType="INTEGER"/>
+        <result property="goodsId" column="goods_id" jdbcType="INTEGER"/>
     </resultMap>
 
     <sql id="Base_Column_List">
         id,buyerId,goods_id
     </sql>
     <select id="selectByPage" resultType="org.example.shoptemp.vo.ShopCarVO">
-
+        select *
+        from shop_car sc,
+             goods g
+        where sc.goods_id = g.id
+          and sc.buyer_id = #{buyerId}
     </select>
 </mapper>
