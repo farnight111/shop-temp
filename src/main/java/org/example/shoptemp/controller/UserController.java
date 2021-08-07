@@ -25,7 +25,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/register")
-    public Result register(@RequestBody User user) {
+    public Result register(User user) {
         userService.save(user);
         return Result.success();
     }
@@ -73,7 +73,7 @@ public class UserController {
      * @param status 1审核通过  2不通过
      * @return
      */
-    @PutMapping("/audit-user")
+    @GetMapping("/audit-user")
     public Result auditUser(Integer userid, Integer status,HttpServletRequest request) {
         User currentUser = (User) request.getSession().getAttribute("user");
         if (currentUser==null) {
@@ -98,6 +98,7 @@ public class UserController {
      */
     @GetMapping("page")
     public Result<Page<User>> listByPage(Page<User> page, String status) {
+        status = "0";
         Page<User> resultPage = userService.listByPage(page, status);
         return Result.success(resultPage);
     }

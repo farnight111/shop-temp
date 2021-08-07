@@ -12,103 +12,92 @@
     <span style="color:  	#484891; font-size: 25px; font-weight: bolder;">[ 购物车 ]</span>
 </div>
 <div style="padding: 10px;">
-
-    <table style="width: 100%;" cellspacing="0" cellpadding="0" border="">
-        <thead>
-        <tr style="background-color: #408080;color:#7E3D76">
-            <th>商品名</th>
-            <th>商品数量</th>
-            <th>单价</th>
-            <th>描述</th>
-<!--            <th>封面</th>-->
-            <th>操作</th>
-        </tr>
-        </thead>
-        <tbody style="text-align: center;background-color:#B3D9D9">
-        </tbody>
-    </table>
-    <div style="padding: 10px;">
-            <span>
-                第<span id="pageNum"></span>页
-            </span>
-        <button id="ppage" disabled class="layui-btn layui-btn-sm"><span class="layui-icon layui-icon-prev"></span>上一页</button>
-        <button id="npage" disabled class="layui-btn layui-btn-sm">下一页 <span class="layui-icon layui-icon-next"></span></button>
+    <div class="layuimini-container">
+        <div class="layui-main">
+<!--            <button type="button" class="layui-btn"><a href="ruleUpdate.jsp">添加规则</a></button>-->
+            <table class="layui-hide" id="nodeList" lay-filter="nodeList"></table>
+        </div>
     </div>
+
 </div>
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" lay-event="getCheckData">下单</button>
+    </div>
+</script>
+
 </body>
 <script>
 
 
 
-    function load(pageNum, pageSize) {
-        $.ajax({
-            url: '/shop-car/page',
-            data: {current: pageNum, size: pageSize},
-            type: 'GET',
-            dataType: 'json',
-            async: true,
-            success: function(response) {
-                var list = response.data.records;
-                console.log(list);
-                if (response.hasNextPage) {
-                    $('#npage').attr('disabled', false)
-                } else {
-                    $('#npage').attr('disabled', true);
+    layui.use('table', function () {
+        let table = layui.table;
+        let form = layui.form;
+        let $ = layui.jquery;
+
+        let tableIns = table.render({
+            elem: '#nodeList'
+            // , url: '/api/table.json'
+            , url: '/shop-car/page'
+            ,toolbar: '#toolbarDemo'
+            , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+            , request: {
+                    pageName: 'current' //页码的参数名称，默认：page
+                        ,limitName: 'size' //每页数据量的参数名，默认：limit
                 }
-
-                if (response.hasPreviousPage) {
-                    $('#npage').attr('disabled', false);
-                }else {
-                    $('#npage').attr('disabled', true);
+            ,defaultToolbar: []
+            , cols: [
+                [
+                    {type: 'checkbox', fixed: 'left'},
+                    {field: 'id', title: '序号', type: 'numbers', unresize: true}
+                    , {field: 'name', title: '商品名',width: 150}
+                    , {field: 'goodsCount', title: '商品数量',width: 150}
+                    , {field: 'price', title: '单价'}
+                ]
+            ]
+            , page: true
+            , parseData: function (res) {
+                let data = res.data.records;
+                return {
+                    "code": 0,
+                    "msg": "错误",
+                    "count": res.data.total,
+                    "data": data
                 }
-
-                $('#pageNum').text(response.pageNum);
-                var html = '';
-                var pay = localStorage.getItem("pay");
-                for (let d of list) {
-                    let charge = d.charge;
-                    let value = charge=="Y"?"收费":"不收费";
-                    html += '<tr>';
-                    html += '<td>' + d.name + '</td>';
-                    html += '<td>' + d.goodsCount + '</td>';
-                    html += '<td>' + d.price + '</td>';
-                    html += '<td>' + d.description + '</td>';
-                    // html += '<td><img style="height: 50px;width: 50px;" src="/book/previewImage?imagename='+encodeURIComponent(d.image)+'"></td>';
-                    // html += '<td>' + d.file + '</td>';
-                    html += '<td style="padding: 10px;">';
-                    if (pay == null) {
-
-                    } else {
-                        if (pay == 'Y' || value == '不收费') {
-                            html += '<a class="layui-btn" href="/book/downloadPdf?filename='+encodeURIComponent(d.file)+'">下载</a>';
-                            html += '<a class="layui-btn " target="_blank" href="/book/previewPdf?filename='+encodeURIComponent(d.file)+'"> 在线预览</a>';
-                        }
-                    }
-
-                    html += '</td>';
-                    html += '</tr>';
-                }
-                $('tbody').html(html);
-            },
-            error: function() {
-
             }
         });
-    }
+        form.render();
 
-    load(1, 20);
+        //监听工具条
+        table.on('toolbar(nodeList)', function(obj){debugger
+            var checkStatus = table.checkStatus(obj.config.id);
+            if(obj.event === 'getCheckData'){
+                var data = checkStatus.data;
+                if (!data) {
+                    alert("请选择")
+                }
+                $.ajax({
+                    url: '/order',
+                    data: JSON.stringify(data),
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType:'application/json;charset=UTF-8',
+                    async: true,
+                    success: function(response) {
+                        layer.msg("下单成功")
+                    },
+                    error: function() {
+                        layer.msg("下单失败")
+                    }
+                });
+            }
+        });
 
 
-    $('#ppage').click(function () {
-        var pageNum = $('#pageNum').text();
-        load(-- pageNum, 20)
+
+        form.render();
     });
-
-    $('#npage').click(function () {
-        var pageNum = $('#pageNum').text();
-        load(++ pageNum, 20)
-    });
-
 
 </script>
 </html>
