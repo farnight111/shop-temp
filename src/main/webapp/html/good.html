@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Products</title>
+    <link href="../css/bootstrap.css" rel="stylesheet" type="text/css" media="all" />
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <!-- Custom Theme files -->
+    <!--theme-style-->
+    <link href="../css/style.css" rel="stylesheet" type="text/css" media="all" />
+    <!--//theme-style-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="" />
+    <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+    <!--fonts-->
+    <link href='http://fonts.useso.com/css?family=Exo:100,200,300,400,500,600,700,800,900' rel='stylesheet' type='text/css'>
+    <!--//fonts-->
+    <script type="text/javascript">
+        jQuery(document).ready(function(¥) {
+            ¥(".scroll").click(function(event){
+                event.preventDefault();
+                ¥('html,body').animate({scrollTop:¥(this.hash).offset().top},1000);
+            });
+        });
+    </script>
+    <script>¥(document).ready(function(c) {
+        ¥('.alert-close').on('click', function(c){
+            ¥('.message').fadeOut('slow', function(c){
+                ¥('.message').remove();
+            });
+        });
+    });
+    </script>
+    <script>¥(document).ready(function(c) {
+        ¥('.alert-close1').on('click', function(c){
+            ¥('.message1').fadeOut('slow', function(c){
+                ¥('.message1').remove();
+            });
+        });
+    });
+    </script>
+</head>
+<body>
+
+<div class="container" style="margin-left: 50px; margin-right: 50px">
+    <div class="products" >
+        <h2 class="products-in">商品</h2>
+    </div>
+</div>
+<!---->
+<div class="footer">
+    <script type="text/javascript">
+        ¥(document).ready(function() {
+
+
+            ¥().UItoTop({ easingType: 'easeOutQuart' });
+
+        });
+    </script>
+    <a href="#" id="toTop" style="display: block;"> <span id="toTopHover" style="opacity: 1;"> </span></a>
+
+</div>
+<script src="../lib/jquery.min.js"></script>
+<script>
+    let name = localStorage.getItem("name")==null?"":localStorage.getItem("name");
+    let id = localStorage.getItem("id");
+    let type = localStorage.getItem("type");
+
+    function load(pageNum, pageSize) {
+        $.ajax({
+            url: '/goods/page',
+            data: {pageNum: pageNum, pageSize: pageSize},
+            type: 'GET',
+            dataType: 'json',
+            async: true,
+            success: function(response) {
+                var list = response.data.records;
+                if (response.hasNextPage) {
+                    $('#npage').attr('disabled', false)
+                } else {
+                    $('#npage').attr('disabled', true);
+                }
+
+                if (response.hasPreviousPage) {
+                    $('#npage').attr('disabled', false);
+                }else {
+                    $('#npage').attr('disabled', true);
+                }
+
+                $('#pageNum').text(response.pageNum);
+                var html = '<h2 class="products-in">商品</h2>';
+                for (let i = 0; i < list.length; i++) {
+                    let d = list[i];
+                    // if (i % 3 == 0) {
+                    //     html += "<div class=\"top-products\">";
+                    // }
+                    html += `<div class="col-md-3 md-col" style="margin-top: 5px;margin-bottom: 5px">
+                                <div class="col-md">
+                                    </a>
+                                    <div class="top-content">
+                                        <h5>${d.name}</h5>
+                                        <div class="white">
+                                            <a href="javascript:void(0)" onclick="saveShop(${d.id})" class="hvr-shutter-in-vertical hvr-shutter-in-vertical2">添加购物车</a>
+                                            <p class="dollar"><span class="in-dollar">¥</span>${d.price}</p>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>`;
+                    // if (i != 0 && i / 3 == 0) {
+                    //     html += "</div>";
+                    // }
+                }
+                for (let d of list) {
+
+                }
+                $('.products').html(html);
+            },
+            error: function() {
+
+            }
+        });
+    }
+
+    load(1, 20);
+
+
+    $('#ppage').click(function () {
+        var pageNum = $('#pageNum').text();
+        load(-- pageNum, 20)
+    });
+
+    $('#npage').click(function () {
+        var pageNum = $('#pageNum').text();
+        load(++ pageNum, 20)
+    });
+
+    function saveShop(userId) {
+        if (id === null) {
+            alert("请先登录");
+        } else {
+            $.ajax({
+                url: '/shop-car',
+                data: {goodsId:userId,goodsCount:1},
+                type: 'POST',
+                dataType: 'json',
+                async: true,
+                success: function(response) {
+                    if (response.code === 0) {
+                       alert("操作成功");
+                    } else {
+                        alert(response.msg);
+                    }
+                }
+            });
+        }
+    }
+
+</script>
+</body>
+</html>

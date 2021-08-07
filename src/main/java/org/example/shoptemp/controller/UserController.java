@@ -42,7 +42,7 @@ public class UserController {
             clone.setPass(null);
             return Result.success(clone);
         } else {
-            return Result.fail("用户名或密码错误");
+            return Result.fail("账号密码错误");
         }
     }
 

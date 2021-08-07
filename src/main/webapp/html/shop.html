@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../lib/jquery.min.js"></script>
+    <script src="../lib/layui/layui.all.js"></script>
+    <link rel="stylesheet" href="../lib/layui/css/layui.css">
+</head>
+<body style="padding: 10px;">
+<div style="padding: 10px;">
+    <span style="color:  	#484891; font-size: 25px; font-weight: bolder;">[ 购物车 ]</span>
+</div>
+<div style="padding: 10px;">
+
+    <table style="width: 100%;" cellspacing="0" cellpadding="0" border="">
+        <thead>
+        <tr style="background-color: #408080;color:#7E3D76">
+            <th>商品名</th>
+            <th>商品数量</th>
+            <th>单价</th>
+            <th>描述</th>
+<!--            <th>封面</th>-->
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody style="text-align: center;background-color:#B3D9D9">
+        </tbody>
+    </table>
+    <div style="padding: 10px;">
+            <span>
+                第<span id="pageNum"></span>页
+            </span>
+        <button id="ppage" disabled class="layui-btn layui-btn-sm"><span class="layui-icon layui-icon-prev"></span>上一页</button>
+        <button id="npage" disabled class="layui-btn layui-btn-sm">下一页 <span class="layui-icon layui-icon-next"></span></button>
+    </div>
+</div>
+</body>
+<script>
+
+
+
+    function load(pageNum, pageSize) {
+        $.ajax({
+            url: '/shop-car/page',
+            data: {current: pageNum, size: pageSize},
+            type: 'GET',
+            dataType: 'json',
+            async: true,
+            success: function(response) {
+                var list = response.data.records;
+                console.log(list);
+                if (response.hasNextPage) {
+                    $('#npage').attr('disabled', false)
+                } else {
+                    $('#npage').attr('disabled', true);
+                }
+
+                if (response.hasPreviousPage) {
+                    $('#npage').attr('disabled', false);
+                }else {
+                    $('#npage').attr('disabled', true);
+                }
+
+                $('#pageNum').text(response.pageNum);
+                var html = '';
+                var pay = localStorage.getItem("pay");
+                for (let d of list) {
+                    let charge = d.charge;
+                    let value = charge=="Y"?"收费":"不收费";
+                    html += '<tr>';
+                    html += '<td>' + d.name + '</td>';
+                    html += '<td>' + d.goodsCount + '</td>';
+                    html += '<td>' + d.price + '</td>';
+                    html += '<td>' + d.description + '</td>';
+                    // html += '<td><img style="height: 50px;width: 50px;" src="/book/previewImage?imagename='+encodeURIComponent(d.image)+'"></td>';
+                    // html += '<td>' + d.file + '</td>';
+                    html += '<td style="padding: 10px;">';
+                    if (pay == null) {
+
+                    } else {
+                        if (pay == 'Y' || value == '不收费') {
+                            html += '<a class="layui-btn" href="/book/downloadPdf?filename='+encodeURIComponent(d.file)+'">下载</a>';
+                            html += '<a class="layui-btn " target="_blank" href="/book/previewPdf?filename='+encodeURIComponent(d.file)+'"> 在线预览</a>';
+                        }
+                    }
+
+                    html += '</td>';
+                    html += '</tr>';
+                }
+                $('tbody').html(html);
+            },
+            error: function() {
+
+            }
+        });
+    }
+
+    load(1, 20);
+
+
+    $('#ppage').click(function () {
+        var pageNum = $('#pageNum').text();
+        load(-- pageNum, 20)
+    });
+
+    $('#npage').click(function () {
+        var pageNum = $('#pageNum').text();
+        load(++ pageNum, 20)
+    });
+
+
+</script>
+</html>
