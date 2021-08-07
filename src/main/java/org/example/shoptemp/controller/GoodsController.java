@@ -30,7 +30,7 @@ public class GoodsController {
         if (user.getType() != 1) {
             return Result.fail("不是商家，不能添加商品");
         }
-        goods.setUserid(user.getId());  //设置商家id
+        goods.setOwnerId(user.getId());  //设置商家id
         goodsService.save(goods);
         return Result.success();
     }

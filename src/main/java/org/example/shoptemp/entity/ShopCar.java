@@ -5,17 +5,15 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
-import java.math.BigDecimal;
-
 import lombok.Data;
 
 /**
- * 商品表
- * @TableName goods
+ * 购物车
+ * @TableName shop_car
  */
-@TableName(value ="goods")
+@TableName(value ="shop_car")
 @Data
-public class Goods implements Serializable {
+public class ShopCar implements Serializable {
     /**
      * 
      */
@@ -23,27 +21,27 @@ public class Goods implements Serializable {
     private Integer id;
 
     /**
-     * 商品名
+     * 买家id
      */
-    private String name;
+    private Integer buyerId;
 
     /**
-     * 描述
+     * 商品id
      */
-    private String description;
-
+    private Integer goodsId;
     /**
-     * 
+     * 商品数量
      */
-    private String images;
-
-    /**
-     * 商家id
-     */
-    private Integer ownerId;
-
-    private BigDecimal price;
+    private Integer goodsCount;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
+
+    /**
+     * 商品数量递增
+     * @param count
+     */
+    public void incrGoodsCount(Integer count) {
+        this.goodsCount += count;
+    }
 }
