@@ -1,14 +1,12 @@
 package org.example.shoptemp.controller;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.example.shoptemp.entity.Goods;
 import org.example.shoptemp.entity.Result;
 import org.example.shoptemp.entity.User;
 import org.example.shoptemp.service.GoodsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -35,5 +33,40 @@ public class GoodsController {
         goods.setUserid(user.getId());  //设置商家id
         goodsService.save(goods);
         return Result.success();
+    }
+
+    @PutMapping
+    public Result update(@RequestBody Goods goods) {
+        User user = (User) request.getSession().getAttribute("user");
+        //判断是不是商家，不是商家就不能添加商品
+        if (user.getType() != 1) {
+            return Result.fail("不是商家，不能修改商品");
+        }
+        goodsService.updateById(goods);
+        return Result.success();
+    }
+
+    @DeleteMapping("/{id}")
+    public Result delete(@PathVariable Integer id) {
+        goodsService.removeById(id);
+        return Result.success();
+    }
+
+    /**
+     * 分页
+     * @param size 每页的数量
+     * @param current 当前页数
+     * @return
+     */
+    @GetMapping("/page")
+    public Result<Page<Goods>> listByPage(Page<Goods> page) {
+        Page<Goods> resultPage = goodsService.page(page);
+        return Result.success(resultPage);
+    }
+
+    @GetMapping
+    public Result<Goods> getById(Integer id) {
+        Goods goods = goodsService.getById(id);
+        return Result.success(goods);
     }
 }
