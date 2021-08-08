@@ -24,14 +24,14 @@
             <input type="text" name="description" style="height: 30px; width: 200px;">
         </div>
     </div>
-<!--    <div style="padding: 10px;">-->
-<!--        <div style="width: 30%; text-align: right; display: inline-block; padding-right: 20px;color:#007979;font-weight:bold">-->
-<!--            图片：-->
-<!--        </div>-->
-<!--        <div style="width: 60%; display: inline-block;" id="showPhone">-->
-
-<!--        </div>-->
-<!--    </div>-->
+    <div style="padding: 10px;">
+        <div style="width: 30%; text-align: right; display: inline-block; padding-right: 20px;color:#007979;font-weight:bold">
+            图片：
+        </div>
+        <div style="width: 60%; display: inline-block;" id="showPhone">
+            <input type="file" name="images" img="" id="images">
+        </div>
+    </div>
     <div style="padding: 10px;">
         <div style="width: 30%; text-align: right; display: inline-block; padding-right: 20px;color:#007979;font-weight:bold">
             价格：
@@ -49,49 +49,6 @@
     </div>
 </div>
 
-<!--<div style="padding: 10px;display: none" id="update">
-
-    <div style="padding: 10px;">
-        <div style="width: 30%; text-align: right; display: inline-block; padding-right: 20px;color:#007979;font-weight:bold">
-            商品名：
-        </div>
-        <div style="width: 60%; display: inline-block;">
-            <input type="text" placeholder="请输入商品名" name="name" style="height: 30px; width: 200px;">
-        </div>
-    </div>
-    <div style="padding: 10px;">
-        <div style="width: 30%; text-align: right; display: inline-block; padding-right: 20px;color:#007979;font-weight:bold">
-            描述：
-        </div>
-        <div style="width: 60%; display: inline-block;">
-            <input type="text" placeholder="请输入描述" name="password" style="height: 30px; width: 200px;">
-        </div>
-    </div>
-&lt;!&ndash;    <div style="padding: 10px;">&ndash;&gt;
-&lt;!&ndash;        <div style="width: 30%; text-align: right; display: inline-block; padding-right: 20px;color:#007979;font-weight:bold">&ndash;&gt;
-&lt;!&ndash;            图片：&ndash;&gt;
-&lt;!&ndash;        </div>&ndash;&gt;
-&lt;!&ndash;        <div style="width: 60%; display: inline-block;">&ndash;&gt;
-&lt;!&ndash;            <input type="text" placeholder="请输入..." name="phone" style="height: 30px; width: 200px;">&ndash;&gt;
-&lt;!&ndash;        </div>&ndash;&gt;
-&lt;!&ndash;    </div>&ndash;&gt;
-    <div style="padding: 10px;">
-        <div style="width: 30%; text-align: right; display: inline-block; padding-right: 20px;color:#007979;font-weight:bold">
-            价格：
-        </div>
-        <div style="width: 60%; display: inline-block;">
-            <input type="text" placeholder="请输入..." name="pay" style="height: 30px; width: 200px;">
-        </div>
-    </div>
-
-    <div style="">
-        <div style="width: 30%; text-align: right; display: inline-block; padding-right: 20px;">
-        </div>
-        <div style="width: 60%; display: inline-block; padding: 10px;">
-            <button class="layui-btn" id="save">保存</button>
-        </div>
-    </div>
-</div>-->
 </body>
 <script>
     var id = GetQueryString('id');
@@ -110,6 +67,7 @@
                 $('input[name=name]').val(response.name);
                 $('input[name=description]').val(response.description);
                 $('input[name=price]').val(response.price);
+                $("#images").attr("images",response.images);
                 id = response.id;
             },
             error: function () {
@@ -134,6 +92,7 @@
         var name = $('input[name=name]').val();
         var description = $('input[name=description]').val();
         var price = $('input[name=price]').val();
+        var images = $('#images').attr("images");
         if (name.length === 0) {
             alert('请输入商品名称');
             return;
@@ -146,13 +105,17 @@
             alert('请输入价格');
             return;
         }
+        if (images.length === 0) {
+            alert('请上传图片');
+            return;
+        }
         let url = "/goods/create";
         if (id) {
             url = "/goods/update"
         }
         $.ajax({
             url: url,
-            data: JSON.stringify({name, id, description, price}),
+            data: JSON.stringify({name, id, description, price,images}),
             contentType : 'application/json;charset=utf-8',
             type: "POST",
             dataType: 'json',
@@ -172,6 +135,25 @@
         });
     });
 
-
+    $("#images").change(function () {
+        var file = $("#images")[0].files[0];
+        var formData = new FormData();
+        formData.append("file", file);
+        $("#images").attr("images",file.name);
+        $.ajax({
+            url: "/image/upload",
+            type: "POST",
+            data: formData,
+            dataType: "json",
+            processData: false,	// 使数据不做处理
+            contentType: false,		// 不要设置Content-Type请求头
+            success: function (res) {
+                console.log(res)
+            },
+            error: function () {
+                alert("操作失败")
+            }
+        });
+    });
 </script>
 </html>

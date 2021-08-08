@@ -98,7 +98,10 @@
                                 <div class="col-md">
                                     </a>
                                     <div class="top-content">
-                                        <h5>${d.name}</h5>
+                                        <span>${d.name}</span>
+                                        <div>
+                                        <img style='width: 50px;height: 50px;' src='/image/preview?imagename=${d.images}' />
+                                        </div>
                                         <div class="white">
                                             <a href="javascript:void(0)" onclick="saveShop(${d.id})" class="hvr-shutter-in-vertical hvr-shutter-in-vertical2">添加购物车</a>
                                             <p class="dollar"><span class="in-dollar">¥</span>${d.price}</p>

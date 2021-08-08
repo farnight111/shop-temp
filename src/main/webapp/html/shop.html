@@ -53,6 +53,10 @@
                     {field: 'id', title: '序号', type: 'numbers', unresize: true}
                     , {field: 'name', title: '商品名',width: 150}
                     , {field: 'goodsCount', title: '商品数量',width: 150}
+                    , {field: "images",title: "图片",templet: function (d) {
+                        let images = d.images;
+                        return "<img style='width: 50px;height: 50px;' src='/image/preview?imagename="+images+"' />"
+                    }}
                     , {field: 'price', title: '单价'}
                     , {field: 'totalPrice', title: '总价'}
                 ]
