@@ -74,7 +74,7 @@
             dataType: 'json',
             async: true,
             success: function(response) {
-                var list = response.data.records;
+                var list = response.data;
                 if (response.hasNextPage) {
                     $('#npage').attr('disabled', false)
                 } else {
