@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../lib/jquery.min.js"></script>
+    <script src="../lib/layui/layui.all.js"></script>
+    <link rel="stylesheet" href="../lib/layui/css/layui.css">
+</head>
+<body style="padding: 10px;">
+<div style="padding: 10px;">
+    <span style="color:  	#484891; font-size: 25px; font-weight: bolder;">[ 商品管理 ]</span>
+</div>
+<div style="padding: 10px;">
+    <div class="layuimini-container">
+        <div class="layui-main">
+<!--            <button type="button" class="layui-btn"><a href="ruleUpdate.jsp">添加规则</a></button>-->
+            <table class="layui-hide" id="nodeList" lay-filter="nodeList"></table>
+        </div>
+    </div>
+
+</div>
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <a href="userUpdate.html" class="layui-btn layui-btn-sm" lay-event="getCheckData">新增</a>
+    </div>
+</script>
+
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+</body>
+<script>
+
+
+
+    layui.use('table', function () {
+        let table = layui.table;
+        let form = layui.form;
+        let $ = layui.jquery;
+
+        let tableIns = table.render({
+            elem: '#nodeList'
+            // , url: '/api/table.json'
+            , url: '/goods/page'
+            ,toolbar: '#toolbarDemo'
+            , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+            , request: {
+                    pageName: 'current' //页码的参数名称，默认：page
+                        ,limitName: 'size' //每页数据量的参数名，默认：limit
+                }
+            ,defaultToolbar: []
+            , cols: [
+                [
+                    {type: 'checkbox', fixed: 'left'},
+                    {field: 'id', title: '序号', type: 'numbers', unresize: true}
+                    , {field: 'name', title: '商品名',width: 150}
+                    , {field: 'price', title: '商品价格',width: 150}
+                    , {field: 'description', title: '商品描述',width: 150}
+                    , {field: 'price', title: '单价'}
+                    , {title: '功能', toolbar: '#barDemo'}
+                ]
+            ]
+            , page: true
+            , parseData: function (res) {
+                let data = res.data.records;
+                return {
+                    "code": 0,
+                    "msg": "错误",
+                    "count": res.data.total,
+                    "data": data
+                }
+            }
+        });
+        form.render();
+
+        //监听工具条
+        table.on('toolbar(nodeList)', function(obj){debugger
+            var checkStatus = table.checkStatus(obj.config.id);
+            if(obj.event === 'getCheckData'){
+                var data = checkStatus.data;
+                if (!data) {
+                    alert("请选择")
+                }
+                $.ajax({
+                    url: '/order',
+                    data: JSON.stringify(data),
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType:'application/json;charset=UTF-8',
+                    async: true,
+                    success: function(response) {
+                        layer.msg("下单成功")
+                    },
+                    error: function() {
+                        layer.msg("下单失败")
+                    }
+                });
+            }
+        });
+//监听工具条
+        table.on('tool(nodeList)', function(obj){
+            var data = obj.data;
+            if(obj.event === 'del'){
+                var id = data.id;
+                $.ajax({
+                    url: '/goods/delete',
+                    data: {id: id},
+                    type: 'delete',
+                    dataType: 'json',
+                    async: true,
+                    success: function(response) {
+                        layer.msg("删除成功")
+                        obj.del();
+                    },
+                    error: function() {
+                        layer.msg("删除失败")
+                    }
+                });
+            } else if(obj.event === 'edit'){
+                location.href = "goodUpdate.jsp?id="+data.id
+            }
+        });
+
+
+        form.render();
+    });
+
+</script>
+</html>

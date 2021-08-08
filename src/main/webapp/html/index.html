@@ -24,8 +24,7 @@
         </div>
 
         <div class="user" style="display: none">
-            <li><a class="defaultClick" href="book.html" target="item" style="color:#007979;font-weight:bold">商品管理</a></li>
-            <li><a class="defaultClick" href="book.html" target="item" style="color:#007979;font-weight:bold">购物车管理</a></li>
+            <li><a class="defaultClick" href="goodManager.html" target="item" style="color:#007979;font-weight:bold">商品管理</a></li>
         </div>
 
         <div class="guest" style="display: none">
@@ -55,6 +54,7 @@
     }else if (type === '1') {
         $("#logout").show();
         $('.user').show();
+        $(".defaultClick")[0].click();
 
     }else if (type == '0') {
         $("#logout").show();
@@ -67,20 +67,6 @@
     $('#logout').click(function () {
         localStorage.clear();
         location.reload();
-        // $.ajax({
-        //     url: '/user/logout',
-        //     data: {},
-        //     type: 'GET',
-        //     dataType: 'json',
-        //     async: true,
-        //     success: function(response) {
-        //
-        //     },
-        //     error: function() {
-        //         $(".guest").show();
-        //     }
-        // });
-        // location.href = 'login.html';
     });
     $('#login').click(function () {
         location.href = '/html/login.html';

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../lib/jquery.min.js"></script>
+    <link rel="stylesheet" href="../lib/layui/css/layui.css">
+</head>
+<body style="padding: 10px;">
+<div id="show">
+    <div style="padding: 10px;" >
+        <div style="width: 30%; text-align: right; display: inline-block; padding-right: 20px;color:#007979;font-weight:bold">
+            用户名：
+        </div>
+        <div style="width: 60%; display: inline-block;" id="showName">
+
+        </div>
+    </div>
+    <div style="padding: 10px;">
+        <div style="width: 30%; text-align: right; display: inline-block; padding-right: 20px;color:#007979;font-weight:bold">
+            密码：
+        </div>
+        <div style="width: 60%; display: inline-block;" id="showPwd">
+
+        </div>
+    </div>
+    <div style="padding: 10px;">
+        <div style="width: 30%; text-align: right; display: inline-block; padding-right: 20px;color:#007979;font-weight:bold">
+            phone：
+        </div>
+        <div style="width: 60%; display: inline-block;" id="showPhone">
+
+        </div>
+    </div>
+    <div style="padding: 10px;">
+        <div style="width: 30%; text-align: right; display: inline-block; padding-right: 20px;color:#007979;font-weight:bold">
+            是否已付费：
+        </div>
+        <div style="width: 60%; display: inline-block;" id="showCharge">
+
+        </div>
+    </div>
+    <div style="">
+        <div style="width: 30%; text-align: right; display: inline-block; padding-right: 20px;">
+        </div>
+        <div style="width: 60%; display: inline-block; padding: 10px;">
+            <button class="layui-btn" onclick="update()">修改</button>
+        </div>
+    </div>
+</div>
+
+<div style="padding: 10px;display: none" id="update">
+
+    <div style="padding: 10px;">
+        <div style="width: 30%; text-align: right; display: inline-block; padding-right: 20px;color:#007979;font-weight:bold">
+            用户名：
+        </div>
+        <div style="width: 60%; display: inline-block;">
+            <input type="text" placeholder="请输入用户名" name="name" style="height: 30px; width: 200px;">
+        </div>
+    </div>
+    <div style="padding: 10px;">
+        <div style="width: 30%; text-align: right; display: inline-block; padding-right: 20px;color:#007979;font-weight:bold">
+            密码：
+        </div>
+        <div style="width: 60%; display: inline-block;">
+            <input type="password" placeholder="请输入密码" name="password" style="height: 30px; width: 200px;">
+        </div>
+    </div>
+    <div style="padding: 10px;">
+        <div style="width: 30%; text-align: right; display: inline-block; padding-right: 20px;color:#007979;font-weight:bold">
+            phone：
+        </div>
+        <div style="width: 60%; display: inline-block;">
+            <input type="text" placeholder="请输入..." name="phone" style="height: 30px; width: 200px;">
+        </div>
+    </div>
+    <div style="padding: 10px;">
+        <div style="width: 30%; text-align: right; display: inline-block; padding-right: 20px;color:#007979;font-weight:bold">
+            是否付费：
+        </div>
+        <div style="width: 60%; display: inline-block;">
+            <input type="text" placeholder="请输入..." name="pay" style="height: 30px; width: 200px;">
+        </div>
+    </div>
+
+    <div style="">
+        <div style="width: 30%; text-align: right; display: inline-block; padding-right: 20px;">
+        </div>
+        <div style="width: 60%; display: inline-block; padding: 10px;">
+            <button class="layui-btn" id="save">保存</button>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    var id = localStorage.getItem("id");
+    $.ajax({
+        url: '/user/get',
+        type: 'GET',
+        data: {id},
+        dataType: 'json',
+        async: true,
+        success: function (response) {
+            $('input[name=name]').val(response.name);
+            $('input[name=password]').val(response.password);
+            $('input[name=phone]').val(response.phone);
+            $('input[name=pay]').val(response.pay=='Y'?"已付费":"未付费");
+            $("#showName").text(response.name);
+            $("#showPwd").text(response.password);
+            $("#showPhone").text(response.phone);
+            $("#showCharge").text(response.pay=='Y'?"已付费":"未付费");
+
+            id = response.id;
+        },
+        error: function () {
+
+        }
+    });
+
+    function update() {
+        $("#show").hide()
+        $("#update").show()
+        $("input[name=pay]").attr("disabled","disabled")
+    }
+
+
+    function GetQueryString(name) {
+        var LocString = String(window.document.location.href);
+        var rs = new RegExp("(^|)" + name + "=([^&]*)(&|$)", "gi").exec(LocString), tmp;
+        if (tmp = rs) {
+            return decodeURI(tmp[2]);
+        }
+        return "";
+    }
+
+
+
+    $('#save').click(function () {
+        var name = $('input[name=name]').val();
+        var password = $('input[name=password]').val();
+        var phone = $('input[name=phone]').val();
+        if (name.length === 0) {
+            alert('请输入账号');
+            return;
+        }
+        if (password.length === 0) {
+            alert('请输入密码');
+            return;
+        }
+        if (phone.length === 0) {
+            alert('请输入手机号');
+            return;
+        }
+        $.ajax({
+            url: '/user/save',
+            data: {name, id, password, phone},
+            type: 'GET',
+            dataType: 'json',
+            async: true,
+            success: function (response) {
+                if (response.code === 0) {
+                    alert("修改成功");
+                    location.href = 'userUpdate.html';
+                } else {
+                    alert(response.msg);
+                }
+            },
+            error: function (err) {
+                alert('请求错误');
+                console.log(err);
+            }
+        });
+    });
+
+
+</script>
+</html>
