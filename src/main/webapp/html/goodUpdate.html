@@ -96,28 +96,35 @@
 <script>
     var id = GetQueryString('id');
     console.log('id', id)
-    $.ajax({
-        url: '/user/get',
-        type: 'GET',
-        data: {id},
-        dataType: 'json',
-        async: true,
-        success: function (response) {
-            $('input[name=name]').val(response.name);
-            $('input[name=password]').val(response.password);
-            $('input[name=phone]').val(response.phone);
-            $('input[name=pay]').val(response.pay=='Y'?"已付费":"未付费");
-            $("#showName").text(response.name);
-            $("#showPwd").text(response.password);
-            $("#showPhone").text(response.phone);
-            $("#showCharge").text(response.pay=='Y'?"已付费":"未付费");
+    //如果没有传入id，就显示新增的div
+    if (id == '') {
+        console.log('新增')
+        $("#show").show()
+        $("#update").hidden()
+    } else {
+        $.ajax({
+            url: '/goods?id=' + id,
+            type: 'GET',
+            // data: {id},
+            dataType: 'json',
+            async: true,
+            success: function (response) {
+                $('input[name=name]').val(response.name);
+                $('input[name=password]').val(response.password);
+                $('input[name=phone]').val(response.phone);
+                $('input[name=pay]').val(response.pay=='Y'?"已付费":"未付费");
+                $("#showName").text(response.name);
+                $("#showPwd").text(response.password);
+                $("#showPhone").text(response.phone);
+                $("#showCharge").text(response.pay=='Y'?"已付费":"未付费");
 
-            id = response.id;
-        },
-        error: function () {
+                id = response.id;
+            },
+            error: function () {
 
-        }
-    });
+            }
+        });
+    }
 
     function update() {
         $("#show").hide()
