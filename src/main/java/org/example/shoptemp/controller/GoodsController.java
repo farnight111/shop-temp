@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * 商品控制器
@@ -59,8 +60,8 @@ public class GoodsController {
      * @return
      */
     @GetMapping("/page")
-    public Result<Page<Goods>> listByPage(Page<Goods> page) {
-        Page<Goods> resultPage = goodsService.page(page);
+    public Result<List<Goods>> listByPage(Page<Goods> page) {
+        List<Goods> resultPage = goodsService.list();
         return Result.success(resultPage);
     }
 
