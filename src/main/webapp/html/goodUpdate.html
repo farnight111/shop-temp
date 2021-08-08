@@ -10,34 +10,34 @@
 <div id="show">
     <div style="padding: 10px;" >
         <div style="width: 30%; text-align: right; display: inline-block; padding-right: 20px;color:#007979;font-weight:bold">
-            用户名：
+            商品名：
         </div>
-        <div style="width: 60%; display: inline-block;" id="showName">
-
-        </div>
-    </div>
-    <div style="padding: 10px;">
-        <div style="width: 30%; text-align: right; display: inline-block; padding-right: 20px;color:#007979;font-weight:bold">
-            密码：
-        </div>
-        <div style="width: 60%; display: inline-block;" id="showPwd">
-
+        <div style="width: 60%; display: inline-block;" id="goodsName">
+            <input type="text" name="name" style="height: 30px; width: 200px;">
         </div>
     </div>
     <div style="padding: 10px;">
         <div style="width: 30%; text-align: right; display: inline-block; padding-right: 20px;color:#007979;font-weight:bold">
-            phone：
+            描述：
         </div>
-        <div style="width: 60%; display: inline-block;" id="showPhone">
-
+        <div style="width: 60%; display: inline-block;" id="description">
+            <input type="text" name="description" style="height: 30px; width: 200px;">
         </div>
     </div>
+<!--    <div style="padding: 10px;">-->
+<!--        <div style="width: 30%; text-align: right; display: inline-block; padding-right: 20px;color:#007979;font-weight:bold">-->
+<!--            图片：-->
+<!--        </div>-->
+<!--        <div style="width: 60%; display: inline-block;" id="showPhone">-->
+
+<!--        </div>-->
+<!--    </div>-->
     <div style="padding: 10px;">
         <div style="width: 30%; text-align: right; display: inline-block; padding-right: 20px;color:#007979;font-weight:bold">
-            是否已付费：
+            价格：
         </div>
-        <div style="width: 60%; display: inline-block;" id="showCharge">
-
+        <div style="width: 60%; display: inline-block;" id="price">
+            <input type="text" name="price" style="height: 30px; width: 200px;">
         </div>
     </div>
     <div style="">
@@ -53,31 +53,31 @@
 
     <div style="padding: 10px;">
         <div style="width: 30%; text-align: right; display: inline-block; padding-right: 20px;color:#007979;font-weight:bold">
-            用户名：
+            商品名：
         </div>
         <div style="width: 60%; display: inline-block;">
-            <input type="text" placeholder="请输入用户名" name="name" style="height: 30px; width: 200px;">
+            <input type="text" placeholder="请输入商品名" name="name" style="height: 30px; width: 200px;">
         </div>
     </div>
     <div style="padding: 10px;">
         <div style="width: 30%; text-align: right; display: inline-block; padding-right: 20px;color:#007979;font-weight:bold">
-            密码：
+            描述：
         </div>
         <div style="width: 60%; display: inline-block;">
-            <input type="password" placeholder="请输入密码" name="password" style="height: 30px; width: 200px;">
+            <input type="text" placeholder="请输入描述" name="password" style="height: 30px; width: 200px;">
         </div>
     </div>
+<!--    <div style="padding: 10px;">-->
+<!--        <div style="width: 30%; text-align: right; display: inline-block; padding-right: 20px;color:#007979;font-weight:bold">-->
+<!--            图片：-->
+<!--        </div>-->
+<!--        <div style="width: 60%; display: inline-block;">-->
+<!--            <input type="text" placeholder="请输入..." name="phone" style="height: 30px; width: 200px;">-->
+<!--        </div>-->
+<!--    </div>-->
     <div style="padding: 10px;">
         <div style="width: 30%; text-align: right; display: inline-block; padding-right: 20px;color:#007979;font-weight:bold">
-            phone：
-        </div>
-        <div style="width: 60%; display: inline-block;">
-            <input type="text" placeholder="请输入..." name="phone" style="height: 30px; width: 200px;">
-        </div>
-    </div>
-    <div style="padding: 10px;">
-        <div style="width: 30%; text-align: right; display: inline-block; padding-right: 20px;color:#007979;font-weight:bold">
-            是否付费：
+            价格：
         </div>
         <div style="width: 60%; display: inline-block;">
             <input type="text" placeholder="请输入..." name="pay" style="height: 30px; width: 200px;">
@@ -94,7 +94,8 @@
 </div>
 </body>
 <script>
-    var id = localStorage.getItem("id");
+    var id = GetQueryString('id');
+    console.log('id', id)
     $.ajax({
         url: '/user/get',
         type: 'GET',

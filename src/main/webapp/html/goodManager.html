@@ -22,7 +22,7 @@
 </div>
 <script type="text/html" id="toolbarDemo">
     <div class="layui-btn-container">
-        <a href="userUpdate.html" class="layui-btn layui-btn-sm" lay-event="getCheckData">新增</a>
+        <a href="goodUpdate.html" class="layui-btn layui-btn-sm" lay-event="getCheckData">新增</a>
     </div>
 </script>
 
@@ -118,8 +118,8 @@
                         layer.msg("删除失败")
                     }
                 });
-            } else if(obj.event === 'edit'){
-                location.href = "goodUpdate.jsp?id="+data.id
+            } else if(obj.event === 'edit') {
+                location.href = "goodUpdate.html?id="+data.id
             }
         });
 
