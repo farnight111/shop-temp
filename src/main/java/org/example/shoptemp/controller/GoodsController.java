@@ -24,7 +24,7 @@ public class GoodsController {
     @Autowired
     private HttpServletRequest request;
 
-    @PostMapping
+    @PostMapping("/create")
     public Result create(@RequestBody Goods goods) {
         User user = (User) request.getSession().getAttribute("user");
         //判断是不是商家，不是商家就不能添加商品
@@ -36,7 +36,7 @@ public class GoodsController {
         return Result.success();
     }
 
-    @PutMapping
+    @PostMapping("/update")
     public Result update(@RequestBody Goods goods) {
         User user = (User) request.getSession().getAttribute("user");
         //判断是不是商家，不是商家就不能添加商品
@@ -55,13 +55,23 @@ public class GoodsController {
 
     /**
      * 分页
+     * @return
+     */
+    @GetMapping("/page")
+    public Result<List<Goods>> list() {
+        List<Goods> resultPage = goodsService.list();
+        return Result.success(resultPage);
+    }
+
+    /**
+     * 分页
      * @param size 每页的数量
      * @param current 当前页数
      * @return
      */
-    @GetMapping("/page")
-    public Result<List<Goods>> listByPage(Page<Goods> page) {
-        List<Goods> resultPage = goodsService.list();
+    @GetMapping("/list")
+    public Result<Page<Goods>> listByPage(Page<Goods> page) {
+        Page<Goods> resultPage = goodsService.page(page);
         return Result.success(resultPage);
     }
 
