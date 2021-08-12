@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>书店</title>
+    <script src="../lib/jquery.min.js"></script>
+    <link rel="stylesheet" href="../lib/layui/css/layui.css">
+    <style>
+        html, body{
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            background-color:#D1E9E9;
+        }
+
+        ul li {
+            list-style-type :none;
+        }
+        li a {
+            display: block;
+            padding: 10px 0;
+            font-weight: bolder;
+            padding-left: 20px;
+        }
+        li a:hover {
+            background-color: #C9C5C5;
+            color: #1E9FFF;
+        }
+    </style>
+</head>
+<body>
+<div style="border-bottom: #C9C5C5 solid 1px; padding: 15px; overflow: hidden; background-color:#408080;border:  #4F9D9D 4px dashed;">
+    <img src="../image/image1.jpeg" alt="" style="height: 45px;  border: orange 4px dashed;">
+    <span style="padding: 10px; color: #5151A2; font-weight: bolder; font-size: 22px;" id="role"></span>
+    <span style="padding: 10px; color: #5151A2; font-weight: bolder; font-size: 18px;" id="name"></span>
+    <button id="logout" style="margin-left: 40px;background-color:#5151A2;display: none" class="layui-btn">退出</button>
+    <button id="login" style="margin-left: 40px;background-color:#5151A2;display: none" class="layui-btn">登录</button>
+</div>
+<div style="width: 15%; float: left; height: 100%; border-right: #C9C5C5 solid 1px;background-color:#6FB7B7">
+    <ul>
+        <div class="admin" style="display: none">
+            <li><a class="defaultClick" href="book-admin.html" target="item" style="color:#007979;font-weight:bold">图书管理</a></li>
+            <li><a href="staff.html" target="item" style="color:#007979;font-weight:bold">审核图书</a></li>
+<!--            <li><a href="staff.html" target="item" style="color:#007979;font-weight:bold">用户信息操作</a></li>-->
+        </div>
+
+        <div class="user" style="display: none">
+            <li><a class="defaultClick" href="book.html" target="item" style="color:#007979;font-weight:bold">图书操作</a></li>
+            <li><a href="userUpdate.html" target="item" style="color:#007979;font-weight:bold">个人信息管理</a></li>
+        </div>
+
+        <div class="guest" style="display: none">
+            <li><a class="defaultClick2" href="/html/book.html" target="item" style="color:#007979;font-weight:bold">图书操作</a></li>
+        </div>
+    </ul>
+</div>
+<div style="width: 84%; float: left; height: 100%;">
+    <iframe name="item" src="" frameborder="0" style="width: 100%; height: 100%;"></iframe>
+</div>
+<script>
+    $('#name').text('姓名：' + localStorage.getItem("name"));
+    var id = localStorage.getItem("id");
+    $.ajax({
+        url: '/user/get',
+        data: {id},
+        type: 'GET',
+        dataType: 'json',
+        async: true,
+        success: function(response) {
+            $(".defaultClick")[0].click();
+            $('#role').text('身份：' + response.role);
+            $('#name').text('姓名：' + response.name);
+            var role = response.role;
+            $("#logout").show();
+            if (role === '管理员') {
+                $('.admin').show();
+            }else if (role === '用户') {
+                $('.user').show();
+            }else {
+                $('.teacher').show();
+            }
+        },
+        error: function() {
+            $("#login").show();
+            $(".guest").show();
+            $(".defaultClick2")[0].click();
+        }
+    });
+
+    $('#logout').click(function () {
+        localStorage.clear();
+        $.ajax({
+            url: '/user/logout',
+            data: {},
+            type: 'GET',
+            dataType: 'json',
+            async: true,
+            success: function(response) {
+                location.reload();
+            },
+            error: function() {
+                $(".guest").show();
+            }
+        });
+        // location.href = 'login.html';
+    });
+    $('#login').click(function () {
+
+        location.href = '/html/index.html';
+    });
+</script>
+</body>
+</html>

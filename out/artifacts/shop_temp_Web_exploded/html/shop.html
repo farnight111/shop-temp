@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../lib/jquery.min.js"></script>
+    <script src="../lib/layui/layui.all.js"></script>
+    <link rel="stylesheet" href="../lib/layui/css/layui.css">
+</head>
+<body style="padding: 10px;">
+<div style="padding: 10px;">
+    <span style="color:  	#484891; font-size: 25px; font-weight: bolder;">[ 购物车 ]</span>
+</div>
+<div style="padding: 10px;">
+    <div class="layuimini-container">
+        <div class="layui-main">
+<!--            <button type="button" class="layui-btn"><a href="ruleUpdate.jsp">添加规则</a></button>-->
+            <table class="layui-hide" id="nodeList" lay-filter="nodeList"></table>
+        </div>
+    </div>
+
+</div>
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" lay-event="getCheckData">下单</button>
+    </div>
+</script>
+
+</body>
+<script>
+
+
+
+    layui.use('table', function () {
+        let table = layui.table;
+        let form = layui.form;
+        let $ = layui.jquery;
+
+        let tableIns = table.render({
+            elem: '#nodeList'
+            // , url: '/api/table.json'
+            , url: '/shop-car/page'
+            ,toolbar: '#toolbarDemo'
+            , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+            , request: {
+                    pageName: 'current' //页码的参数名称，默认：page
+                        ,limitName: 'size' //每页数据量的参数名，默认：limit
+                }
+            ,defaultToolbar: []
+            , cols: [
+                [
+                    {type: 'checkbox', fixed: 'left'},
+                    {field: 'id', title: '序号', type: 'numbers', unresize: true}
+                    , {field: 'name', title: '商品名',width: 150}
+                    , {field: 'goodsCount', title: '商品数量',width: 150}
+                    , {field: "images",title: "图片",templet: function (d) {
+                        let images = d.images;
+                        return "<img style='width: 50px;height: 50px;' src='/image/preview?imagename="+images+"' />"
+                    }}
+                    , {field: 'price', title: '单价'}
+                    , {field: 'totalPrice', title: '总价'}
+                ]
+            ]
+            , page: true
+            , parseData: function (res) {
+                let data = res.data.records;
+                return {
+                    "code": 0,
+                    "msg": "错误",
+                    "count": res.data.total,
+                    "data": data
+                }
+            }
+        });
+        form.render();
+
+        //监听工具条
+        table.on('toolbar(nodeList)', function(obj){debugger
+            var checkStatus = table.checkStatus(obj.config.id);
+            if(obj.event === 'getCheckData'){
+                var data = checkStatus.data;
+                if (!data) {
+                    alert("请选择")
+                }
+                $.ajax({
+                    url: '/order',
+                    data: JSON.stringify(data),
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType:'application/json;charset=UTF-8',
+                    async: true,
+                    success: function(response) {
+                        layer.msg("下单成功")
+                    },
+                    error: function() {
+                        layer.msg("下单失败")
+                    }
+                });
+            }
+        });
+
+
+
+        form.render();
+    });
+
+</script>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../lib/jquery.min.js"></script>
+    <link rel="stylesheet" href="../lib/layui/css/layui.css">
+</head>
+<body style="padding: 10px;">
+    <div style="padding: 10px;">
+        <a href="dept.html" class="layui-btn layui-icon-return layui-icon" style="background-color:#5151A2"> 返回</a>
+    </div>
+    <div style="padding: 10px;">
+
+        <div style="padding: 10px;">
+            <div style="width: 30%; text-align: right; display: inline-block; padding-right: 20px;color:#007979;font-weight:bold">
+                部门名称：
+            </div>
+            <div style="width: 60%; display: inline-block;">
+                <input type="text" placeholder="请输入部门名称" name="name" style="height: 30px; width: 200px;">
+            </div>
+        </div>
+
+        <div style="">
+            <div style="width: 30%; text-align: right; display: inline-block; padding-right: 20px;">
+            </div>
+            <div style="width: 60%; display: inline-block; padding: 10px;">
+                <button class="layui-btn" id="save">保存</button>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    function GetQueryString(name) {
+        var LocString = String(window.document.location.href);
+        var rs = new RegExp("(^|)" + name + "=([^&]*)(&|$)", "gi").exec(LocString), tmp;
+        if (tmp = rs) {
+            return decodeURI(tmp[2]);
+        }
+        return "";
+    }
+
+    var id = GetQueryString('id');
+
+    $('#save').click(function () {
+        var name = $('input[name=name]').val();
+        if (name.length === 0) {
+            alert('请输入账号');
+            return;
+        }
+        $.ajax({
+            url: '/dept/save',
+            data: {name, id},
+            type: 'GET',
+            dataType: 'json',
+            async: true,
+            success: function(response) {
+                if (response.code === 0) {
+                    location.href = 'dept.html';
+                } else {
+                    alert(response.msg);
+                }
+            },
+            error: function(err) {
+                alert('请求错误');
+                console.log(err);
+            }
+        });
+    });
+
+    if (id.length > 0) {
+        $.ajax({
+            url: '/dept/get',
+            data: {id: id},
+            type: 'GET',
+            dataType: 'json',
+            async: true,
+            success: function(response) {
+                $('input[name=name]').val(response.name);
+            },
+            error: function() {
+
+            }
+        });
+    }
+</script>
+</html>
